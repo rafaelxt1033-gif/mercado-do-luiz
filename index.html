@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermercado Express | Compras Online e IA</title>
+    
+    <!-- Fontes do Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Paleta de Cores: Frescor e Varejo */
+        :root {
+            --green-primary: #10B981;
+            --green-dark: #047857;
+            --orange-accent: #F59E0B;
+            --bg-light: #F3F4F6;
+            --white: #FFFFFF;
+            --text-dark: #1F2937;
+            --text-gray: #6B7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+        }
+
+        /* CABEÇALHO E NAVEGAÇÃO */
+        header {
+            background-color: var(--green-primary);
+            color: var(--white);
+            padding: 1rem 5%;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--white);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CARRINHO DE COMPRAS */
+        .cart-btn {
+            background: var(--white);
+            color: var(--green-primary);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .cart-btn:hover { background: var(--bg-light); transform: scale(1.05); }
+        .cart-count { background: var(--orange-accent); color: white; padding: 2px 8px; border-radius: 50%; font-size: 0.9rem;}
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        nav a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* BANNERS E DESTAQUES */
+        .hero {
+            background: linear-gradient(rgba(16, 185, 129, 0.8), rgba(4, 120, 87, 0.9)), url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover;
+            padding: 4rem 5%;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .hero h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 1rem; }
+        .hero p { font-size: 1.2rem; margin-bottom: 2rem; }
+
+        /* ASSISTENTE DE IA (O Diferencial) */
+        .ia-section {
+            background: var(--white);
+            margin: -30px 5% 3rem 5%;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            position: relative;
+            text-align: center;
+            border-top: 5px solid var(--orange-accent);
+        }
+
+        .ia-section h2 { color: var(--green-dark); margin-bottom: 1rem; }
+        .ia-section p { color: var(--text-gray); margin-bottom: 1.5rem; }
+        
+        .ia-input-group {
+            display: flex;
+            gap: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+            flex-wrap: wrap;
+        }
+
+        .ia-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-ia {
+            background: var(--orange-accent);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-ia:hover { background: #D97706; }
+
+        /* SESSÕES DE PRODUTOS */
+        .produtos-section { padding: 3rem 5%; }
+        .produtos-section h2 { font-size: 2rem; color: var(--green-dark); margin-bottom: 1.5rem; border-bottom: 3px solid var(--green-primary); display: inline-block; padding-bottom: 5px; }
+
+        .grid-produtos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .card-produto {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #E5E7EB;
+        }
+        .card-produto:hover { transform: translateY(-5px); border-color: var(--green-primary); }
+
+        .img-produto {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .cat-tag { font-size: 0.8rem; color: var(--text-gray); text-transform: uppercase; font-weight: 800; }
+        .card-produto h3 { font-size: 1.1rem; color: var(--text-dark); margin: 5px 0 10px 0; }
+        .preco { font-size: 1.4rem; color: var(--green-primary); font-weight: 900; margin-bottom: 1rem; }
+
+        .btn-add {
+            background: var(--green-primary);
+            color: var(--white);
+            border: none;
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-add:hover { background: var(--green-dark); }
+
+        /* MODAL DO CARRINHO */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0; right: 0; bottom: 0; left: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: flex-end;
+        }
+        .cart-content {
+            background: var(--white);
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid #eee; padding-bottom: 1rem; }
+        .cart-header h2 { color: var(--green-dark); }
+        .close-cart { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-gray); }
+        
+        .cart-items { flex: 1; overflow-y: auto; margin-bottom: 1rem; }
+        .cart-item-row { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px dashed #eee; padding-bottom: 10px; }
+        
+        .cart-total { font-size: 1.5rem; font-weight: 900; color: var(--text-dark); text-align: right; margin-bottom: 1rem; }
+        
+        .btn-checkout {
+            background: #25D366; /* Verde WhatsApp */
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--text-dark);
+            color: var(--white);
+            text-align: center;
+            padding: 3rem 5%;
+        }
+
+        @media (max-width: 768px) {
+            .header-top { flex-direction: column; gap: 15px; }
+            .ia-input-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO -->
+    <header>
+        <div class="header-top">
+            <a href="#" class="logo"><i class="fa-solid fa-basket-shopping"></i> Super Express</a>
+            <button class="cart-btn" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping"></i> 
+                Meu Carrinho <span class="cart-count" id="cart-counter">0</span>
+            </button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#mercearia">Arroz, Feijão & Massas</a></li>
+                <li><a href="#frios">Laticínios & Frios</a></li>
+                <li><a href="#hortifruti">Hortifruti</a></li>
+                <li><a href="#limpeza">Limpeza</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <h1>Faça a feira do mês sem sair de casa.</h1>
+        <p>Receba suas compras frescas e embaladas na sua porta em menos de 2 horas.</p>
+    </section>
+
+    <!-- ASSISTENTE IA -->
+    <section class="ia-section">
+        <h2><i class="fa-solid fa-wand-magic-sparkles" style="color: var(--orange-accent);"></i> Monte sua lista com a nossa IA</h2>
+        <p>Com pressa? Digite a sua lista de compras abaixo. Nossa Inteligência Artificial acha os produtos e enche o seu carrinho automaticamente!</p>
+        
+        <div class="ia-input-group">
+            <input type="text" id="buscaIA" class="ia-input" placeholder="Ex: Quero 5kg de arroz, 2 pacotes de feijão carioca e 500g de queijo mussarela">
+            <button class="btn-ia" onclick="processarListaIA()">Analisar e Montar Carrinho</button>
+        </div>
+        <div id="ia-msg" style="display: none; color: var(--green-primary); font-weight: bold; margin-top: 15px;">
+            <i class="fa-solid fa-check"></i> IA processou sua lista! Adicionamos o Arroz, Feijão e Queijo ao seu carrinho.
+        </div>
+    </section>
+
+    <!-- SEÇÃO MERCEARIA -->
+    <section id="mercearia" class="produtos-section">
+        <h2>Mercearia Básica</h2>
+        <div class="grid-produtos">
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1586201375761-83865001e8ac?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Arroz" class="img-produto">
+                <p class="cat-tag">Cereais</p>
+                <h3>Arroz Branco Tipo 1 (5kg)</h3>
+                <p class="preco">R$ 28,90</p>
+                <button class="btn-add" onclick="addAoCarrinho('Arroz Branco 5kg', 28.90)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+            
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1551462147-37885acc36f1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Feijão" class="img-produto">
+                <p class="cat-tag">Grãos</p>
+                <h3>Feijão Carioca Premium (1kg)</h3>
+                <p class="preco">R$ 8,50</p>
+                <button class="btn-add" onclick="addAoCarrinho('Feijão Carioca 1kg', 8.50)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1612968393521-872f2316e812?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Macarrão" class="img-produto">
+                <p class="cat-tag">Massas</p>
+                <h3>Macarrão Espaguete (500g)</h3>
+                <p class="preco">R$ 4,99</p>
+                <button class="btn-add" onclick="addAoCarrinho('Macarrão Espaguete 500g', 4.99)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+            
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1621939514649-280e2ee25f60?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Óleo" class="img-produto">
+                <p class="cat-tag">Óleos</p>
+                <h3>Óleo de Soja (900ml)</h3>
+                <p class="preco">R$ 6,80</p>
+                <button class="btn-add" onclick="addAoCarrinho('Óleo de Soja 900ml', 6.80)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO FRIOS E LATICÍNIOS -->
+    <section id="frios" class="produtos-section" style="background: var(--white);">
+        <h2>Laticínios & Frios</h2>
+        <div class="grid-produtos">
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Queijo" class="img-produto">
+                <p class="cat-tag">Frios</p>
+                <h3>Queijo Mussarela Fatiado (500g)</h3>
+                <p class="preco">R$ 24,90</p>
+                <button class="btn-add" onclick="addAoCarrinho('Queijo Mussarela 500g', 24.90)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1550583724-b2692b85b150?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Leite" class="img-produto">
+                <p class="cat-tag">Laticínios</p>
+                <h3>Leite Integral Caixa (1L)</h3>
+                <p class="preco">R$ 5,30</p>
+                <button class="btn-add" onclick="addAoCarrinho('Leite Integral 1L', 5.30)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+            
+            <div class="card-produto">
+                <img src="https://images.unsplash.com/photo-1528750711905-2401f11e9a30?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Manteiga" class="img-produto">
+                <p class="cat-tag">Laticínios</p>
+                <h3>Manteiga com Sal (200g)</h3>
+                <p class="preco">R$ 11,50</p>
+                <button class="btn-add" onclick="addAoCarrinho('Manteiga com Sal 200g', 11.50)"><i class="fa-solid fa-plus"></i> Adicionar</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <h2 style="margin-bottom: 1rem;"><i class="fa-solid fa-basket-shopping"></i> Super Express</h2>
+        <p>A loja online oficial. Mais conforto e agilidade para a sua família.</p>
+        <p style="margin-top: 2rem; color: var(--text-gray); font-size: 0.9rem;">&copy; 2026 Direitos Reservados. Desenvolvido com tecnologia de alta conversão.</p>
+    </footer>
+
+    <!-- MODAL CARRINHO -->
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>Seu Carrinho</h2>
+                <button class="close-cart" onclick="toggleCart()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="cart-items" id="lista-carrinho">
+                <!-- Itens via JS -->
+                <p style="color: var(--text-gray); text-align: center; margin-top: 2rem;">Seu carrinho está vazio.</p>
+            </div>
+            
+            <div class="cart-total">Total: R$ <span id="valor-total">0,00</span></div>
+            
+            <!-- FINALIZAR NO WHATSAPP -->
+            <button class="btn-checkout" onclick="enviarPedidoZap()">
+                <i class="fa-brands fa-whatsapp"></i> Finalizar Pedido no WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOJA VIRTUAL E IA -->
+    <script>
+        let carrinho = [];
+        let total = 0;
+
+        // Função para Adicionar Item
+        function addAoCarrinho(nome, preco) {
+            carrinho.push({ nome: nome, preco: preco });
+            total += preco;
+            atualizarCarrinhoVisual();
+            
+            // Efeito visual no botão
+            const contador = document.getElementById('cart-counter');
+            contador.style.transform = "scale(1.5)";
+            setTimeout(() => contador.style.transform = "scale(1)", 200);
+        }
+
+        // Função para Atualizar a Interface do Carrinho
+        function atualizarCarrinhoVisual() {
+            document.getElementById('cart-counter').innerText = carrinho.length;
+            const lista = document.getElementById('lista-carrinho');
+            
+            if(carrinho.length === 0) {
+                lista.innerHTML = '<p style="color: gray; text-align: center;">Seu carrinho está vazio.</p>';
+            } else {
+                lista.innerHTML = '';
+                carrinho.forEach((item, index) => {
+                    lista.innerHTML += `
+                        <div class="cart-item-row">
+                            <span style="font-weight: 600;">1x ${item.nome}</span>
+                            <span style="color: var(--green-primary); font-weight: bold;">R$ ${item.preco.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('valor-total').innerText = total.toFixed(2).replace('.', ',');
+        }
+
+        // Abrir/Fechar Carrinho
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            if(modal.style.display === "flex") {
+                modal.style.display = "none";
+            } else {
+                modal.style.display = "flex";
+            }
+        }
+
+        // Simulação da Inteligência Artificial
+        function processarListaIA() {
+            const texto = document.getElementById('buscaIA').value.toLowerCase();
+            if(!texto) { alert("Digite os itens que deseja procurar!"); return; }
+
+            const btn = document.querySelector('.btn-ia');
+            btn.innerText = "Processando lista...";
+            
+            setTimeout(() => {
+                let itensEncontrados = 0;
+                // A IA "lê" o texto e acha os produtos correspondentes no banco de dados
+                if(texto.includes('arroz')) { addAoCarrinho('Arroz Branco 5kg', 28.90); itensEncontrados++; }
+                if(texto.includes('feijão')) { addAoCarrinho('Feijão Carioca 1kg', 8.50); itensEncontrados++; }
+                if(texto.includes('queijo')) { addAoCarrinho('Queijo Mussarela 500g', 24.90); itensEncontrados++; }
+                if(texto.includes('leite')) { addAoCarrinho('Leite Integral 1L', 5.30); itensEncontrados++; }
+
+                btn.innerText = "Analisar e Montar Carrinho";
+                
+                if(itensEncontrados > 0) {
+                    document.getElementById('ia-msg').style.display = "block";
+                    setTimeout(() => toggleCart(), 1500); // Abre o carrinho automaticamente
+                } else {
+                    alert("A IA não identificou os itens exatos na base de dados, navegue pelas categorias!");
+                }
+            }, 1000);
+        }
+
+        // Enviar Pedido para o WhatsApp do Dono
+        function enviarPedidoZap() {
+            if(carrinho.length === 0) { alert("Adicione itens ao carrinho primeiro!"); return; }
+
+            // Número do Dono do Mercado (Ajuste aqui)
+            const numeroZap = "5511999999999"; 
+
+            let msg = "🛒 *NOVO PEDIDO - SUPER EXPRESS* 🛒%0A%0A";
+            carrinho.forEach(item => {
+                msg += `✅ 1x ${item.nome} - R$ ${item.preco.toFixed(2).replace('.', ',')}%0A`;
+            });
+            msg += `%0A💰 *TOTAL DA COMPRA: R$ ${total.toFixed(2).replace('.', ',')}*%0A%0A`;
+            msg += "Qual seria a forma de pagamento e o endereço de entrega?";
+
+            window.open(`https://wa.me/${numeroZap}?text=${msg}`, '_blank');
+        }
+    </script>
+</body>
+</html>
